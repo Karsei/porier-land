@@ -1,0 +1,49 @@
+﻿<div class="ui top attached tabular grid stackable menu">
+        <a [@appearTrigger]="'in'" (@appearTrigger.start)="accordionTriggerStarted($event);" *ngFor="let accordion of accordions; let first = first" class="four wide column item" [class.active]="first" attr.data-tab="{{identifier}}-tab-{{accordion.key}}">
+            <span [class.grey]="accordion.prepared">{{accordion.placeNameKo}} ({{accordion.placeNameEn}})</span>
+            <div class="ui left pointing label">{{accordion.activeItemCount}}</div>
+        </a>
+</div>
+<div *ngFor="let accordion of accordions; let first = first" class="ui bottom attached tab segment" [class.active]="first" attr.data-tab="{{identifier}}-tab-{{accordion.key}}">
+    <accordion *ngIf="accordion.childAccordions.length > 0" [topAccordions]="topAccordions" [accordions]="accordion.childAccordions" [identifier]="identifier" (onCancelItem)="chainOnCancelItem($event);"></accordion>
+    <div *ngIf="accordion.items.length > 0" class="ui cards">
+        <div *ngFor="let item of accordion.items" [@appearTrigger]="'in'" class="card">
+            <div class="content">
+                <img class="ui rounded mini image" [src]="'/assets/' + item.iconPath">
+            </div>
+            <div class="content">
+                <div class="header">{{item.nameKo}}</div>
+                <div class="meta">{{item.nameEn}}</div>
+                <div *ngIf="item.itemType === 2" class="description">
+                    <h4 class="ui block header">
+                        <img class="ui image" [src]="item.selectedGatheringJob.iconPath">
+                        <div class="content">
+                            {{item.selectedGatheringJob.nameKo}}
+                            <div class="sub header">{{item.selectedGatheringJob.nameEn}}</div>
+                        </div>
+                    </h4>
+                    로 {{item.requiredAmount}} 개 채집해야 해요!
+                </div>
+                <div *ngIf="item.itemType === 3" class="description">
+                    <h4 class="ui block header">
+                        {{item.requiredAmount}} 개 구입해야 해요
+                    </h4>
+                </div>
+            </div>
+            <div class="ui attached positive button" (click)="toggleItem(item);">
+                <i class="checkmark icon"></i>
+                다 모았어요!
+            </div>
+            <div class="ui bottom attached negative button" (click)="cancelItem(item);">
+                <i class="remove icon"></i>
+                <span *ngIf="item.itemType === 2">채집 안 할래요!</span>
+                <span *ngIf="item.itemType === 3">안 살래요!</span>
+            </div>
+            <div class="ui dimmer" (click)="toggleItem(item);" [class.active]="item.prepared">
+                <h4 class="ui icon header">
+                    <i class="inverted checkmark icon"></i>
+                </h4>
+            </div>
+        </div>
+    </div>
+</div>

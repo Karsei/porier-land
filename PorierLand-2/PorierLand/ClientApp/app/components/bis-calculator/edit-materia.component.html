@@ -1,0 +1,119 @@
+﻿<div *ngIf="currentEquipment" class="ui segment">
+    <h4 class="ui header">
+        <img class="ui image" [src]="'/assets/' + currentEquipment.iconPath" />
+        <div class="content">
+            <span *ngIf="currentEquipment.nameKo && currentEquipment.nameKo.length > 0">{{currentEquipment.nameKo}}</span>
+            <span *ngIf="!currentEquipment.nameKo || currentEquipment.nameKo.length <= 0">{{currentEquipment.nameEn}}</span>
+            <span *ngIf="currentEquipment.itemLevel"> ({{currentEquipment.itemLevel}})</span>
+            <div *ngIf="currentEquipment.source && currentEquipment.source.length > 0" class="sub header">
+                {{currentEquipment.source}}
+            </div>
+        </div>
+    </h4>
+    <table class="ui unstackable complex three column table">
+        <tbody>
+            <tr *ngFor="let availableMateria of availableMaterias; index as index; first as first;">
+                <td *ngIf="first" [attr.rowspan]="availableMaterias.length">
+                    <div class="ui circular images">
+                        <img class="ui super-mini image" *ngFor="let materia of currentEquipment.materias" [src]="'/assets/' + materia.iconPath" />
+                    </div>
+                </td>
+                <td>
+                    <div id="attribute-dropdown-{{index}}" class="ui fluid dropdown" [@dropdownTrigger]="'in'" (@dropdownTrigger.start)="initializeAttributeDropdown($event, index);">
+                        <i class="dropdown icon"></i>
+                        <div class="default text"></div>
+                        <div class="menu">
+                            <div class="item" [attr.data-value]="stringify({index: index, attribute: -1}) + 'string'">
+                                -
+                            </div>
+                            <div *ngFor="let attributeMateriaName of availableMateria.attributeMateriaNames; index as index2" class="item"
+                                 [attr.data-value]="stringify({index: index, attribute: availableMateria.attributes[index2]}) + 'string'"
+                                 [class.negative-text]="!availableMateria.attributeIsAvailable[index2]">
+                                ({{availableMateria.attributeDisplayNames[index2]}}) {{attributeMateriaName}}
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div id="materia-type-dropdown-{{index}}" class="ui fluid dropdown" [@dropdownTrigger]="'in'" (@dropdownTrigger.start)="initializeMateriaTypeDropdown($event, index);">
+                        <i class="dropdown icon"></i>
+                        <div class="default text"></div>
+                        <div class="menu">
+                            <div class="item" [attr.data-value]="stringify({index: index, materiaType: -1}) + 'string'">
+                                -
+                            </div>
+                            <div *ngFor="let materiaTypeDisplayName of availableMateria.materiaTypeDisplayNames; index as index2" class="item"
+                                 [attr.data-value]="stringify({index: index, materiaType: availableMateria.materiaTypes[index2]}) + 'string'">
+                                {{materiaTypeDisplayName}}
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="ui unstackable celled table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>현재값</th>
+                <th>가능값</th>
+            </tr>
+        </thead>
+        <tbody *ngIf="currentSet && currentSet.attributeDisplays">
+            <tr *ngFor="let attributeDisplay of currentSet.attributeDisplays; index as index; first as first">
+                <td>{{attributeDisplay.displayName}}</td>
+                <td>
+                    {{equipmentAttributeValues[index]}}
+                    <span *ngIf="materiaAttributeValues[index] > 0" class="positive-text"> +{{materiaAttributeValues[index]}}</span>
+                </td>
+                <td [class.positive-text]="availableAttributeValues[index] > 0"
+                    [class.negative-text]="availableAttributeValues[index] <= 0">
+                    {{availableAttributeValues[index]}}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="ui fluid positive icon labeled button" (click)="goBack();">
+        <i class="checkmark icon"></i>
+        마테리아 설정 적용!
+    </div>
+</div>
+<div class="ui right fixed vertical menu" *ngIf="currentSet">
+    <div class="item">
+        <div class="header">BiS 정보</div>
+        <div class="menu">
+            <div class="item">
+                <div class="ui header">
+                    {{currentSet.damageEstimate | number:'1.0-2'}}
+                    <div class="sub header">BiS 기대값</div>
+                </div>
+            </div>
+            <div class="item">
+                <div class="ui header">
+                    {{currentSet.globalCooldown | number:'1.0-2'}}
+                    <div class="sub header">글로벌 쿨다운</div>
+                </div>
+            </div>
+            <div class="item">
+                <div class="ui header">
+                    {{currentSet.damageReduction | percent:'1.0-2'}}
+                    <div class="sub header">데미지 감소값</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="ui bottom fixed item menu" [class.seven]="currentSet.isTankOrHeal" [class.six]="!currentSet.isTankOrHeal" *ngIf="currentSet && currentSet.attributeDisplays">
+    <div *ngFor="let attributeDisplay of currentSet.attributeDisplays; index as index;" class="item">
+        <div class="ui header">
+            {{currentSet.attributeValues[index]}}
+            <div class="sub header">
+                {{attributeDisplay.displayName}}
+            </div>
+            <div *ngIf="attributeDisplay.attribute === 7" class="sub header">
+                HP {{currentSet.hp}}
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,66 @@
+﻿<div class="ui secondary pointing violet menu">
+    <a class="header item" routerLink="/home">
+        포리에랜드 for FFXIV
+    </a>
+    <a class="item" routerLink="/reminder" routerLinkActive="active">
+        오늘 이거 했니?
+    </a>
+    <a class="item" routerLink="/craft-calculator" routerLinkActive="active">
+        제작 재료 계산기
+    </a>
+	<a class="item" routerLink="/bis-calculator" routerLinkActive="active">
+		BiS 계산기
+	</a>
+    <a class="item" routerLink="/act-plugin" routerLinkActive="active">
+        ACT 플러그인 (미터기)
+    </a>
+    <div class="right menu">
+        <div class="ui dropdown item">
+            잡 HUD 인벤 인장 생성기
+            <i class="dropdown icon"></i>
+            <div class="menu">
+                <a class="item" href="https://porier-land.tk/hud/gen">생성기 ver.1</a>
+                <a class="item" href="https://porier-land.tk/hud/gen2">생성기 ver.2</a>
+                <a class="item" href="https://porier-land.tk/hud/gen3">생성기 ver.3</a>
+            </div>
+        </div>
+        <a class="item" href="https://porier-land.tk/hud/mamul">마물 조건식 생성기</a>
+        <a class="item" routerLink="/release-note" routerLinkActive="active">
+            업데이트 내역
+        </a>
+        <div class="item">
+            <div class="ui basic violet button" (click)="openFriendModal();">포리에가 누구야?</div>
+        </div>
+    </div>
+</div>
+<div class="ui center aligned container">
+    <!--<div class="ui icon warning message">
+        <i class="warning icon"></i>
+        <div class="content">
+            <div class="header">업데이트 예정!</div>
+            <ul class="list">
+                <li>FFXIV 한국 서버 4.05 DB 업데이트가 1월 31일 12:00 AM에 디플로이될 예정입니다!</li>
+                <li>디플로이 도중에 웹사이트가 잠시 작동하지 않을 수 있어요! 양해 부탁드립니다..!</li>
+            </ul>
+        </div>
+    </div>-->
+    <router-outlet></router-outlet>
+    <div class="ui center basic segment" style="color: grey; font-size: 80%;">
+        <p>ⓒ 2010 - 2018 SQUARE ENIX CO., LTD. All Rights Reserved. Published in Korea by EYEDENTITY MOBILE CO., LTD.</p>
+        <p>ⓒ 2018 Porier at Clayfish. All Rights Reserved.</p>
+    </div>
+</div>
+<div id="friend-modal" class="ui basic fullscreen modal">
+    <i class="close icon"></i>
+    <div class="header">
+        <a class="twitter-follow-button" href="https://twitter.com/_porier_" data-size="large"></a>
+    </div>
+    <div class="image content">
+        <div class="ui fluid images">
+            <img class="ui image" src="/assets/tchinso.png">
+        </div>
+    </div>
+    <div class="content">
+        <p>상기 이미지들은 <a href="http://ffxivtools.me/" target="_blank">ffxivtools.me</a>의 생성기를 사용해 만들어졌습니다!</p>
+    </div>
+</div>

@@ -1,0 +1,18 @@
+﻿<div *ngFor="let releaseNote of releaseNotes; let index = index" class="ui segment" [class.top]="index === 0" [class.bottom]="index === releaseNotes.length - 1" [class.attached]="true" [class.secondary]="index % 2 === 1">
+    <div class="ui basic clearing segment">
+        <h1 class="ui right floated header">
+            <div class="content">
+                {{releaseNote.date}}
+                <div class="sub header">
+                    <p>{{releaseNote.time}}</p>
+                </div>
+            </div>
+        </h1>
+    </div>
+    <div class="ui basic segment" *ngFor="let note of releaseNote.notes">
+        <h3 class="ui dividing header">{{note.title}}</h3>
+        <ul class="ui very relaxed list">
+            <li *ngFor="let change of note.changes">{{change}}</li>
+        </ul>
+    </div>
+</div>

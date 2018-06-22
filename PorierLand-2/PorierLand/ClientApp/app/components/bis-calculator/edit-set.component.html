@@ -1,0 +1,260 @@
+﻿<div class="ui page dimmer" [class.active]="loading">
+    <div class="ui text loader">계산중!</div>
+</div>
+<div id="error-modal" class="ui basic modal">
+    <div class="ui icon header">
+        <i class="warning sign icon"></i>
+        에러 발생!
+    </div>
+    <div class="content">
+        <div class="ui center aligned basic segment">
+            <p>서버에서 예상치 못한 에러가 발생하였어요! 조금 기다렸다가 다시 시도해주셔요!</p>
+        </div>
+    </div>
+    <div class="actions">
+        <div class="ui green ok inverted button">
+            <i class="checkmark icon"></i>
+            OK
+        </div>
+    </div>
+</div>
+<div class="ui segment">
+    <div class="two fields">
+        <div class="ui primary button" [class.basic]="!fourOnePresetEnabled" (click)="enableFourOnePreset();">파이널 판타지 14 4.1 프리셋</div>
+        <div class="ui primary button" [class.basic]="!fourTwoPresetEnabled" (click)="enableFourTwoPreset();">파이널 판타지 14 4.2 프리셋</div>
+    </div>
+</div>
+<div class="ui segment">
+    <form #itemSearchForm="ngForm" class="ui form">
+        <div class="three fields">
+            <div class="required field" [class.error]="!raceInput.valid">
+                <label>종족</label>
+                <div id="race-dropdown" class="ui selection fluid dropdown">
+                    <input type="hidden" [(ngModel)]="race" name="raceInput" #raceInput="ngModel" required />
+                    <i class="dropdown icon"></i>
+                    <div class="default text"></div>
+                    <div class="menu">
+                        <div class="header">휴런</div>
+                        <div class="item" data-value="1">휴런 - 중원부족</div>
+                        <div class="item" data-value="2">휴런 - 고원부족</div>
+                        <div class="divider"></div>
+                        <div class="header">애옹</div>
+                        <div class="item" data-value="3">미코테 - 태양의 추종자</div>
+                        <div class="item" data-value="4">미코테 - 달의 수호자</div>
+                        <div class="divider"></div>
+                        <div class="header">엘레젠</div>
+                        <div class="item" data-value="5">엘레젠 - 숲 부족</div>
+                        <div class="item" data-value="6">엘레젠 - 황혼 부족</div>
+                        <div class="divider"></div>
+                        <div class="header">루가딘</div>
+                        <div class="item" data-value="7">루가딘 - 바다늑대</div>
+                        <div class="item" data-value="8">루가딘 - 불꽃지킴이</div>
+                        <div class="divider"></div>
+                        <div class="header">라라펠</div>
+                        <div class="item" data-value="9">라라펠 - 평원 부족</div>
+                        <div class="item" data-value="10">라라펠 - 사막 부족</div>
+                        <div class="divider"></div>
+                        <div class="header">아우라</div>
+                        <div class="item" data-value="11">아우라 - 아우라 렌</div>
+                        <div class="item" data-value="12">아우라 - 아우라 젤라</div>
+                    </div>
+                </div>
+            </div>
+            <div class="required field" [class.error]="!jobInput.valid">
+                <label>직업</label>
+                <div id="job-dropdown" class="ui selection fluid dropdown">
+                    <input type="hidden" [(ngModel)]="job" name="jobInput" #jobInput="ngModel" required />
+                    <i class="dropdown icon"></i>
+                    <div class="default text"></div>
+                    <div class="menu">
+                        <div class="header">방어</div>
+                        <div class="item" data-value="1">나이트</div>
+                        <div class="item" data-value="2">전사</div>
+                        <div class="item" data-value="3">암흑기사</div>
+                        <div class="divider"></div>
+                        <div class="header">회복</div>
+                        <div class="item" data-value="4">백마도사</div>
+                        <div class="item" data-value="5">학자</div>
+                        <div class="item" data-value="6">점성술사</div>
+                        <div class="divider"></div>
+                        <div class="header">근거리 공격</div>
+                        <div class="item" data-value="7">몽크</div>
+                        <div class="item" data-value="8">용기사</div>
+                        <div class="item" data-value="9">닌자</div>
+                        <div class="item" data-value="10">사무라이</div>
+                        <div class="divider"></div>
+                        <div class="header">원거리 물리 공격</div>
+                        <div class="item" data-value="11">음유시인</div>
+                        <div class="item" data-value="12">기공사</div>
+                        <div class="divider"></div>
+                        <div class="header">원거리 마법 공격</div>
+                        <div class="item" data-value="13">흑마도사</div>
+                        <div class="item" data-value="14">소환사</div>
+                        <div class="item" data-value="15">적마도사</div>
+                    </div>
+                </div>
+            </div>
+            <div class="two fields">
+                <div class="required field" [class.error]="!minLevelInput.valid">
+                    <label>최소 아이템 레벨</label>
+                    <input [(ngModel)]="minLevel" type="number" step="5" name="minLevelInput" #minLevelInput="ngModel" required (input)="minLevelChanged();" />
+                </div>
+                <div class="required field" [class.error]="!maxLevelInput.valid">
+                    <label>최대 아이템 레벨</label>
+                    <input [(ngModel)]="maxLevel" type="number" step="5" name="maxLevelInput" #maxLevelInput="ngModel" required (input)="maxLevelChanged();" />
+                </div>
+            </div>
+        </div>
+        <div class="field">
+            <div *ngFor="let sourceFilter of sourceFilters"
+                    class="ui primary button" [class.basic]="!sourceFilter.enabled" (click)="toggleSourceFilter(sourceFilter);">
+                {{sourceFilter.name}}
+            </div>
+        </div>
+        <button class="ui fluid positive button" [class.disabled]="!itemSearchForm.form.valid" (click)="refresh();">아이템 테이블 갱신!</button>
+    </form>
+</div>
+<div class="ui raised segment">
+    <div *ngFor="let table of tables; index as index;">
+        <div *ngIf="index > 0 && table.rows.length > 0 && currentSet && currentSet.attributeDisplays" class="ui basic segment">
+            <table class="ui unstackable selectable celled table">
+                <thead>
+                    <tr>
+                        <th class="left aligned">{{table.equipCategoryName}}</th>
+                        <th class="center aligned">마테리아</th>
+                        <th *ngFor="let attributeDisplay of currentSet.attributeDisplays" class="center aligned">{{attributeDisplay.displayName}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let row of table.rows" [class.active]="row.selected" (click)="selectRow(table, row);">
+                        <td class="left aligned">
+                            <h4 class="ui header">
+                                <img class="ui image" [src]="'/assets/' + row.equipment.iconPath" />
+                                <div class="content">
+                                    <span *ngIf="row.equipment.nameKo && row.equipment.nameKo.length > 0">{{row.equipment.nameKo}}</span>
+                                    <span *ngIf="!row.equipment.nameKo || row.equipment.nameKo.length <= 0">{{row.equipment.nameEn}}</span>
+                                    <span *ngIf="row.equipment.itemLevel"> ({{row.equipment.itemLevel}})</span>
+                                    <div *ngIf="row.equipment.source && row.equipment.source.length > 0" class="sub header">
+                                        {{row.equipment.source}}
+                                    </div>
+                                </div>
+                            </h4>
+                        </td>
+                        <td class="center aligned">
+                            <div class="ui basic button" (click)="editMateria(row.equipment);" [attr.data-tooltip]="row.materiaNames" [attr.data-inverted]="''" [attr.data-position]="'top center'">
+                                <div class="ui circular images">
+                                    <img class="ui super-mini image" *ngFor="let materia of row.equipment.materias" [src]="'/assets/' + materia.iconPath" />
+                                </div>
+                            </div>
+                        </td>
+                        <td *ngFor="let attributeValue of row.attributeValues; index as index2;" class="center aligned">
+                            {{attributeValue}} <span *ngIf="row.materiaAttributeValues[index2] > 0"
+                                                     class="small-green-text">
+                                +{{row.materiaAttributeValues[index2]}}
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div *ngIf="currentSet && currentSet.attributeDisplays" class="ui segment">
+    <form #mealSearchForm="ngForm" class="ui form">
+        <h4 class="ui header">요리 검색</h4>
+        <div class="two fields">
+            <div class="required field" [class.error]="!mealMinLevelInput.valid">
+                <label>최소 아이템 레벨</label>
+                <input [(ngModel)]="mealMinLevel" type="number" step="5" name="mealMinLevelInput" #mealMinLevelInput="ngModel" required (input)="mealMinLevelChanged();" />
+            </div>
+            <div class="required field" [class.error]="!mealMaxLevelInput.valid">
+                <label>최대 아이템 레벨</label>
+                <input [(ngModel)]="mealMaxLevel" type="number" step="5" name="mealMaxLevelInput" #mealMaxLevelInput="ngModel" required (input)="mealMaxLevelChanged();" />
+            </div>
+        </div>
+        <button class="ui fluid positive button" [class.disabled]="!mealSearchForm.form.valid" (click)="mealSearch();">요리 검색</button>
+    </form>
+</div>
+<div *ngIf="mealRows && mealRows.length > 0 && currentSet && currentSet.attributeDisplays" class="ui raised segment">
+    <table class="ui unstackable selectable celled table">
+        <thead>
+            <tr>
+                <th class="left aligned">요리</th>
+                <th *ngFor="let attributeDisplay of currentSet.attributeDisplays" class="center aligned">{{attributeDisplay.displayName}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let mealRow of mealRows" [class.active]="mealRow.selected" (click)="selectMealRow(mealRow);">
+                <td class="left aligned">
+                    <h4 class="ui header">
+                        <img class="ui image" [src]="'/assets/' + mealRow.meal.iconPath" />
+                        <div class="content">
+                            <span *ngIf="mealRow.meal.nameKo && mealRow.meal.nameKo.length > 0">{{mealRow.meal.nameKo}}</span>
+                            <span *ngIf="!mealRow.meal.nameKo || mealRow.meal.nameKo.length <= 0">{{mealRow.meal.nameEn}}</span>
+                            <span *ngIf="mealRow.meal.itemLevel"> ({{mealRow.meal.itemLevel}})</span>
+                            <div *ngIf="mealRow.meal.jobLevel && mealRow.meal.numStarsArray" class="sub header">
+                                요리사 {{mealRow.meal.jobLevel}} <span *ngFor="let star of mealRow.meal.numStarsArray"><i class="empty star icon"></i></span>
+                            </div>
+                        </div>
+                    </h4>
+                </td>
+                <td *ngFor="let attributeValue of mealRow.attributeValues" class="center aligned">
+                    {{attributeValue}}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div *ngIf="currentSet && currentSetEquipments && currentSetEquipments.length > 0" class="ui right fixed vertical menu">
+    <div class="item">
+        <div class="header">BiS 정보</div>
+        <div class="menu">
+            <div class="item">
+                <div class="ui header">
+                    {{currentSet.damageEstimate | number:'1.0-2'}}
+                    <div class="sub header">BiS 기대값</div>
+                </div>
+            </div>
+            <div class="item">
+                <div class="ui header">
+                    {{currentSet.globalCooldown | number:'1.0-2'}} 초
+                    <div class="sub header">글로벌 쿨다운</div>
+                </div>
+            </div>
+            <div class="item">
+                <div class="ui header">
+                    {{currentSet.damageReduction | percent:'1.0-2'}}
+                    <div class="sub header">데미지 감소값</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="item">
+        <div class="header">선택된 장비들</div>
+        <div class="menu">
+            <div *ngFor="let equipment of currentSetEquipments" class="item">
+                <span *ngIf="equipment.nameKo && equipment.nameKo.length > 0">{{equipment.nameKo}}</span>
+                <span *ngIf="!equipment.nameKo || equipment.nameKo.length <= 0">{{equipment.nameEn}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="item">
+        <div class="ui positive icon labeled button" (click)="addSet();">
+            <i class="checkmark icon"></i>
+            세트 등록!
+        </div>
+    </div>
+</div>
+<div class="ui bottom fixed item menu" [class.seven]="currentSet.isTankOrHeal" [class.six]="!currentSet.isTankOrHeal" *ngIf="currentSet && currentSet.attributeDisplays">
+    <div *ngFor="let attributeDisplay of currentSet.attributeDisplays; index as index;" class="item">
+        <div class="ui header">
+            {{currentSet.attributeValues[index]}}
+            <div class="sub header">
+                {{attributeDisplay.displayName}}
+            </div>
+            <div *ngIf="attributeDisplay.attribute === 7" class="sub header">
+                HP {{currentSet.hp}}
+            </div>
+        </div>
+    </div>
+</div>

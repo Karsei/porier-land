@@ -1,0 +1,395 @@
+﻿<div class="ui page dimmer" [class.active]="loading">
+    <div class="ui text loader">계산중!</div>
+</div>
+<div id="error-modal" class="ui basic modal">
+    <div class="ui icon header">
+        <i class="warning sign icon"></i>
+        에러 발생!
+    </div>
+    <div class="content">
+        <div class="ui center aligned basic segment">
+            <p>서버에서 예상치 못한 에러가 발생하였어요! 조금 기다렸다가 다시 시도해주셔요!</p>
+        </div>
+    </div>
+    <div class="actions">
+        <div class="ui green ok inverted button">
+            <i class="checkmark icon"></i>
+            OK
+        </div>
+    </div>
+</div>
+<div class="ui top attached segment">
+    <h1 class="ui icon header">
+        <i class="calculator icon"></i>
+        <div class="content">
+            제작 재료 계산기
+            <div class="sub header"><del>총사령부 조달할 때마다 재료 찾기 귀찮아서 만든거.</del></div>
+        </div>
+    </h1>
+    <h4 class="ui dividing header">사용 설명서</h4>
+    <div class="ui left aligned basic segment">
+        <div class="ui icon info message">
+            <i class="archive icon"></i>
+            <div class="content">
+                <div class="header">제작법 관련 유의사항!</div>
+                <ul class="list">
+                    <li>해당 사이트는 북미 클라이언트 데이터를 기반으로 작동하기 때문에 간혹 한국 서버에는 아직 업데이트되지 않은 제작법들이 나올 때가 있습니다.</li>
+                    <li>발견 시 트위터나 이메일로 제보해주시면 최대한 빨리 수정하도록 하겠습니다!</li>
+                </ul>
+            </div>
+        </div>
+        <ol class="ui very relaxed list">
+            <li>해당 계산기는 사용하고 계신 브라우저의 <a href="https://developer.mozilla.org/ko/docs/Web/API/Window/localStorage" target="_blank">로컬 스토리지</a>에 자동으로 저장되며 <u>새 탭을 열거나 브라우저를 재시작하더라도 사라지지 않습니다.</u></li>
+            <li>만들고자 하는 아이템을 영문 혹은 한글 이름으로 검색해 <strong>필요 아이템 리스트</strong>에 추가합니다. 아이템 수량은 <strong>필요 아이템 리스트</strong> 내에서 조절할 수 있습니다.</li>
+            <li><strong>필요 아이템 리스트</strong>에 추가된 아이템을 어떤 제작 직업으로 제작할 지 선택하여 <strong>제작 아이템 리스트</strong>에 추가합니다.</li>
+            <li>필요한 하위 재료들이 자동으로 <strong>필요 아이템 리스트</strong>에 합산되어 표기됩니다.</li>
+            <li>
+                만약 제작/입수가 둘 다 가능한 하위 재료들을 직접 제작하고 싶은 경우, 위 2단계를 반복하여 해당 하위 재료를 <strong>제작 아이템 리스트</strong>에 추가하면 됩니다.
+                <br />
+                <small>예) 철판 2개가 하위 재료로써 <strong>필요 아이템 리스트</strong>에 추가되었지만 철판을 철 주괴부터 직접 만들고 싶은 경우, 철판 아이템 하단의 제작 직업 선택 버튼을 통해 철판을 <strong>제작 아이템 리스트</strong>에 추가하면 됩니다!</small>
+            </li>
+            <li>
+                NPC에게 구입 가능한 필요 아이템의 경우 <em>NPC에게 구입할래요!</em> 버튼을 통해 <strong>구입 아이템 리스트</strong>에 추가할 수 있습니다.
+                <br />
+                <small><em>구입 NPC 자동으로 선택</em>이 <strong>체크</strong>되어있을 경우 판매 NPC들 중 이동 동선을 최소화하는 NPC가 자동으로 선택되어 추가됩니다.</small>
+                <br />
+                <small><em>구입 NPC 자동으로 선택</em>이 <strong>체크 해제</strong>되어있을 경우 어떤 NPC에게 구입할 지 선택할 수 있는 선택창이 나타납니다.</small>
+                <br />
+                <small>선택창에서 파란색으로 하이라이트된 지역/NPC명은 이미 구입 리스트에 추가되어있어 선택할 경우 이동 동선이 최소화되는 지역/NPC들입니다.</small>
+            </li>
+            <li>
+                채집 가능한 필요 아이템의 경우 어떤 채집 직업으로 채집할 지 선택하여 <strong>채집 아이템 리스트</strong>에 추가할 수 있습니다.
+                <br />
+                <small><em>채집 지역 자동으로 선택</em>이 <strong>체크</strong>되어있을 경우 필요 채집 레벨이 가장 낮은 지역이 자동으로 선택되어 추가됩니다.</small>
+                <br />
+                <small><em>채집 지역 자동으로 선택</em>이 <strong>체크 해제</strong>되어있을 경우 어떤 지역에서 채집할 지 선택할 수 있는 선택창이 나타납니다.</small>
+                <br />
+                <small>선택창에서 파란색으로 하이라이트된 지역명은 이미 채집 리스트에 추가되어있어 선택할 경우 이동 동선이 최소화되는 지역입니다.</small>
+            </li>
+        </ol>
+    </div>
+    <h4 class="ui dividing header">아이템 검색기</h4>
+    <form class="ui form">
+        <div class="field">
+            <div id="item-search" class="ui fluid search">
+                <div class="ui icon input">
+                    <input class="prompt" type="text" placeholder="검색 키워드 입력!" [(ngModel)]="searchText" [ngModelOptions]="{standalone:true}">
+                    <i class="search icon"></i>
+                </div>
+                <div class="ui results"></div>
+            </div>
+        </div>
+        <div class="two fields">
+            <div class="field">
+                <div class="ui toggle checkbox">
+                    <input type="checkbox" (change)="autoGathering = !autoGathering">
+                    <label>채집 지역 자동으로 선택</label>
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui toggle checkbox">
+                    <input type="checkbox" (change)="autoBuying = !autoBuying">
+                    <label>구입 NPC 자동으로 선택</label>
+                </div>
+            </div>
+        </div>
+        <div class="field">
+            <div class="ui toggle checkbox">
+                <input type="checkbox" (change)="getCrystals = !getCrystals">
+                <label>샤드/크리스탈/클러스터를 계산에 포함</label>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="ui bottom attached segment">
+    <button class="ui negative button" (click)="reset();">계산기 리셋!</button>
+</div>
+<div class="ui raised segment">
+    <h1 class="ui dividing header">
+        <i class="star icon"></i>
+        <div class="content">
+            필요 아이템 리스트
+        </div>
+    </h1>
+    <div *ngIf="requiredItems.length === 0">
+        <h1 class="ui icon header">
+            <i class="meh icon"></i>
+            <div class="content">
+                필요한 아이템이 없어요!
+            </div>
+        </h1>
+    </div>
+    <div *ngIf="requiredItems.length > 0" class="ui cards">
+        <div *ngFor="let requiredItem of requiredItems" [@appearTrigger]="'in'" class="card">
+            <div class="content">
+                <img class="ui rounded mini image" [src]="'/assets/' + requiredItem.iconPath">
+            </div>
+            <div class="content">
+                <div class="header">{{requiredItem.nameKo}}</div>
+                <div class="meta">{{requiredItem.nameEn}}</div>
+                <div class="description">
+                    <form class="ui form">
+                        <div class="field">
+                            <label>필요 갯수</label>
+                            <input type="number" [min]="requiredItem.minimumAmount" [(ngModel)]="requiredItem.requiredAmount" [ngModelOptions]="{standalone:true}">
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div *ngIf="requiredItem.recipes.length > 0" class="ui attached segment">
+                <div class="ui list">
+                    <div *ngFor="let recipe of requiredItem.recipes" class="item">
+                        <button [@startTrigger] (@startTrigger.start)="popupButtonTriggerStarted($event);" class="ui fluid button" (click)="craftItem(requiredItem, recipe);">
+                            {{recipe.craftingJob.nameKo}}
+                            <img class="ui mini image" style="display: inline;" [src]="recipe.craftingJob.iconPath">
+                            로 제작할래요!
+                        </button>
+                        <div class="ui special flowing popup">
+                            <div class="header">
+                                <h3 class="ui header">
+                                    <img class="ui image" [src]="recipe.craftingJob.iconPath">
+                                    <div class="content">
+                                        {{recipe.craftingJob.nameKo}}
+                                        <div class="sub header">
+                                            {{recipe.craftingJob.nameEn}}
+                                        </div>
+                                    </div>
+                                </h3>
+                            </div>
+                            <div class="content">
+                                <p>필요 레벨: {{recipe.level}} <span *ngFor="let star of recipe.numStarsArray"><i class="empty star icon"></i></span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="requiredItem.gatherings.length > 0" class="ui attached segment">
+                <div class="ui list">
+                    <div *ngFor="let gathering of requiredItem.gatherings" class="item">
+                        <button [@startTrigger] (@startTrigger.start)="popupButtonTriggerStarted($event);" class="ui fluid button" (click)="gatherItem(requiredItem, gathering);">
+                            {{gathering.gatheringJob.nameKo}}
+                            <img class="ui mini image" style="display: inline;" [src]="gathering.gatheringJob.iconPath">
+                            로 채집할래요!
+                        </button>
+                        <div class="ui special flowing popup">
+                            <div class="header">
+                                <h3 class="ui header">
+                                    <img class="ui image" [src]="gathering.gatheringJob.iconPath">
+                                    <div class="content">
+                                        {{gathering.gatheringJob.nameKo}}
+                                        <div class="sub header">
+                                            {{gathering.gatheringJob.nameEn}}
+                                        </div>
+                                    </div>
+                                </h3>
+                            </div>
+                            <div class="content">
+                                <p>필요 레벨: {{gathering.minLevel}} <span *ngFor="let star of gathering.numStarsArray"><i class="empty star icon"></i></span></p>
+                                <span *ngIf="gathering.isHidden" class="ui red small label">미지</span>
+                                <span *ngIf="gathering.gatheringSubCategory" class="ui blue small label">{{gathering.gatheringSubCategory.nameKo}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="requiredItem.shops.length > 0" class="ui attached yellow button" (click)="buyItem(requiredItem);">
+                <i class="shop icon"></i>
+                NPC에게 구입할래요!
+            </div>
+            <div class="ui attached positive button" (click)="toggleItem(requiredItem);">
+                <i class="checkmark icon"></i>
+                다 구했어요!
+            </div>
+            <div *ngIf="requiredItem.parentMaterials.length === 0" class="ui bottom attached negative button" (click)="removeRequiredItem(requiredItem);">
+                <i class="delete icon"></i>
+                리스트에서 뺄래요!
+            </div>
+            <div class="ui dimmer" (click)="toggleItem(requiredItem);" [class.active]="requiredItem.prepared">
+                <h1 class="ui icon header">
+                    <i class="inverted checkmark icon"></i>
+                </h1>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="ui raised secondary segment">
+    <h1 class="ui dividing header">
+        <i class="tree icon"></i>
+        <div class="content">
+            채집 아이템 리스트
+        </div>
+    </h1>
+    <div *ngIf="gatheringAccordions.length === 0">
+        <h1 class="ui icon header">
+            <i class="meh icon"></i>
+            <div class="content">
+                채집할 아이템이 없어요!
+            </div>
+        </h1>
+    </div>
+    <div *ngIf="gatheringAccordions.length > 0">
+        <accordion [topAccordions]="gatheringAccordions" [accordions]="gatheringAccordions" [identifier]="'gathering'" (onCancelItem)="cancelItem($event);"></accordion>
+    </div>
+</div>
+<div class="ui raised segment">
+    <h1 class="ui dividing header">
+        <i class="shop icon"></i>
+        <div class="content">
+            구입 아이템 리스트
+        </div>
+    </h1>
+    <div *ngIf="buyingAccordions.length === 0">
+        <h1 class="ui icon header">
+            <i class="meh icon"></i>
+            <div class="content">
+                구입할 아이템이 없어요!
+            </div>
+        </h1>
+    </div>
+    <div *ngIf="buyingAccordions.length > 0">
+        <accordion [topAccordions]="buyingAccordions" [accordions]="buyingAccordions" [identifier]="'buying'" (onCancelItem)="cancelItem($event);"></accordion>
+    </div>
+</div>
+<div class="ui raised secondary segment">
+    <h1 class="ui dividing header">
+        <i class="configure icon"></i>
+        <div class="content">
+            제작 아이템 리스트
+        </div>
+    </h1>
+    <div *ngIf="craftingItems.length === 0">
+        <h1 class="ui icon header">
+            <i class="meh icon"></i>
+            <div class="content">
+                제작할 아이템이 없어요!
+            </div>
+        </h1>
+    </div>
+    <div *ngIf="craftingItems.length > 0" class="ui cards">
+        <div *ngFor="let craftingItem of craftingItems" [@appearTrigger]="'in'" class="card">
+            <div class="content">
+                <img class="ui rounded mini image" [src]="'/assets/' + craftingItem.iconPath">
+            </div>
+            <div class="content">
+                <div class="header">{{craftingItem.nameKo}}</div>
+                <div class="meta">{{craftingItem.nameEn}}</div>
+                <div class="description">
+                    <h4 class="ui block header">
+                        <img class="ui image" [src]="craftingItem.selectedRecipe.craftingJob.iconPath">
+                        <div class="content">
+                            {{craftingItem.selectedRecipe.craftingJob.nameKo}}
+                            <div class="sub header">{{craftingItem.selectedRecipe.craftingJob.nameEn}}</div>
+                        </div>
+                    </h4>
+                    로 <strong>{{craftingItem.craftNumber}} 번</strong> 제작해서 총 {{craftingItem.requiredAmount}} 개를 만들어야 해요!
+                </div>
+            </div>
+            <div class="ui attached positive button" (click)="toggleItem(craftingItem);">
+                <i class="checkmark icon"></i>
+                다 만들었어요!
+            </div>
+            <div class="ui bottom attached negative button" (click)="cancelCraftingItem(craftingItem);">
+                <i class="remove icon"></i>
+                안 만들래요!
+            </div>
+            <div class="ui dimmer" (click)="toggleItem(craftingItem);" [class.active]="craftingItem.prepared">
+                <h1 class="ui icon header">
+                    <i class="inverted checkmark icon"></i>
+                </h1>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="ui basic modal" id="gathering-modal">
+    <i class="close icon"></i>
+    <div class="ui header">
+        <div class="ui grid">
+            <div class="six wide column">
+                <h3 class="ui inverted centered header">
+                    <img class="ui image" [src]="selectedGathering.gatheringJob.iconPath">
+                    <div class="content">
+                        {{selectedGathering.gatheringJob.nameKo}}
+                        <div class="sub header">
+                            {{selectedGathering.gatheringJob.nameEn}}
+                        </div>
+                    </div>
+                </h3>
+            </div>
+            <div class="two wide column">
+                <h4 class="ui inverted icon centered header">
+                    <i class="inverted chevron circle right icon"></i>
+                </h4>
+            </div>
+            <div class="six wide column">
+                <h3 class="ui inverted centered header">
+                    <img class="ui image" [src]="'/assets/' + selectedGatheringItem.iconPath">
+                    <div class="content">
+                        {{selectedGatheringItem.nameKo}}
+                        <div class="sub header">
+                            {{selectedGatheringItem.nameEn}}
+                        </div>
+                    </div>
+                </h3>
+            </div>
+        </div>
+    </div>
+    <div class="scrolling content">
+        <table class="ui complex inverted table">
+            <tbody>
+                <tr *ngFor="let gatheringRow of gatheringTable">
+                    <td *ngFor="let gatheringData of gatheringRow; last as last" [rowSpan]="gatheringData.rowSpan" class="center aligned">
+                        <button *ngIf="last" class="ui inverted button" [class.black]="!gatheringData.existing" [class.blue]="gatheringData.existing" (click)="selectGatheringData(gatheringData);">
+                            <h4 class="ui inverted header">
+                                {{gatheringData.placeNameKo}}
+                                <div class="sub header">{{gatheringData.placeNameEn}}</div>
+                            </h4>
+                            <div class="ui black label">필요 레벨: {{gatheringData.level}}</div>
+                        </button>
+                        <h4 *ngIf="!last" class="ui inverted header" [class.blue]="gatheringData.existing">
+                            {{gatheringData.placeNameKo}}
+                            <div class="sub header">{{gatheringData.placeNameEn}}</div>
+                        </h4>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="ui basic modal" id="buying-modal">
+    <i class="close icon"></i>
+    <div class="ui header">
+        <h3 class="ui inverted centered header">
+            <img class="ui image" [src]="'/assets/' + selectedBuyingItem.iconPath">
+            <div class="content">
+                {{selectedBuyingItem.nameKo}}
+                <div class="sub header">
+                    {{selectedBuyingItem.nameEn}}
+                </div>
+            </div>
+        </h3>
+    </div>
+    <div class="scrolling content">
+        <table class="ui complex inverted table">
+            <tbody>
+                <tr *ngFor="let buyingRow of buyingTable">
+                    <td *ngFor="let place of buyingRow; last as last" [rowSpan]="place.rowSpan" class="center aligned">
+                        <button *ngIf="last" class="ui inverted button" [class.black]="!place.existing" [class.blue]="place.existing" (click)="selectBuyingPlace(place);">
+                            <h4 class="ui inverted header">
+                                {{place.npc.nameKo}} ({{place.npc.nameEn}})
+                                <div class="sub header">
+                                    {{place.npc.shop.nameKo}} ({{place.npc.shop.nameEn}})
+                                    <br/>
+                                    ({{place.npc.x}}, {{place.npc.y}})
+                                </div>
+                            </h4>
+                        </button>
+                        <h4 *ngIf="!last" class="ui inverted header" [class.blue]="place.existing">
+                            {{place.nameKo}}
+                            <div class="sub header">{{place.nameEn}}</div>
+                        </h4>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

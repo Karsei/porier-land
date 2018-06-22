@@ -1,0 +1,157 @@
+﻿01 - zone name
+0: id
+1: timestamp
+2: zone id?
+3: zone name
+
+
+
+02 - player
+0: id
+1: timestamp
+2: char id?
+3: name
+
+
+
+03 - popup
+0: id
+1: timestamp
+2: char id?
+3: name
+
+
+
+04 - popoff
+0: id
+1: timestamp
+2: char id
+3: name
+
+
+
+20 - casting started
+0: id
+1: timestamp
+2: caster id?
+3: caster name
+4: skill id?
+5: skill name
+6: target id?
+7: target name
+8: ?
+
+
+
+21 - skill hit
+0: id
+1: timestamp
+2: caster id
+3: caster name
+4: skill id
+5: skill name
+6: target id
+7: target name
+
+9: damage (hex) (global)
+17: damage (hex) (korean)
+
+24: target current hp
+25: target max hp
+
+30: target x
+31: target y
+32: target z
+
+39: caster x
+40: caster y
+41: caster z
+
+
+
+22 - aoe
+0: id
+1: timestamp
+2: caster id
+3: caster name
+4: skil id
+5: skil name
+6: target id
+7: target name
+
+9: damage (hex) (global)
+17: damage (hex) (korean)
+
+24: target hp
+25: target max hp
+
+30: target x
+31: target y
+32: target z
+
+39: caster x
+40: caster y
+41: caster z
+
+
+
+23 - casting cancel
+0: id
+1: timestamp
+2: caster id
+3: caster name
+4: skill id
+5: skill name
+6: Cancelled
+
+
+
+24 - dot / hot
+0: id
+1: timestamp
+2: target id
+3: target name
+4: DoT/HoT
+
+7: target hp
+8: target max hp
+
+13: target x
+14: target y
+15: target z
+
+
+
+25 - death
+0: id
+1: timestamp
+2: killed id
+3: killed name
+4: killer id
+5: killer name
+
+
+
+26 - de/buff
+0: id
+1: timestamp
+2: buff id
+3: buff name
+4: duration (set)
+5: caster id
+6: caster name
+7: target id
+8: target name
+
+
+
+30 - de/buff off
+0: id
+1: timestamp
+2: buff id
+3: buff name
+4: 0.00
+5: sender id
+6: sender name
+7: owner id
+8: owner name

@@ -1,0 +1,17 @@
+﻿@{ 
+    ViewData["Title"] = "포리에랜드 for FFXIV";
+}
+
+<app asp-prerender-module="ClientApp/dist/main-server">
+    <div class="ui active dimmer">
+        <div class="ui text loader">로딩중...</div>
+    </div>
+</app>
+
+<script src="~/dist/vendor.js" asp-append-version="true"></script>
+<script src="~/jquery/dist/jquery.min.js"></script>
+<script src="~/semantic/dist/semantic.min.js"></script>
+
+@section scripts {
+    <script src="~/dist/main-client.js" asp-append-version="true"></script>
+}

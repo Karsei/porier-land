@@ -1,0 +1,12 @@
+﻿.positive-text {
+    color: green !important;
+}
+
+.negative-text {
+    color: red !important;
+}
+
+.super-mini {
+    width: 24px;
+    height: 24px;
+}

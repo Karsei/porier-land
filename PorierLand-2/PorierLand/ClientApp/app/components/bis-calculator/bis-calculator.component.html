@@ -1,0 +1,185 @@
+﻿<div class="ui page dimmer" [class.active]="loading">
+    <div class="ui text loader">계산중!</div>
+</div>
+<div id="error-modal" class="ui basic modal">
+    <div class="ui icon header">
+        <i class="warning sign icon"></i>
+        에러 발생!
+    </div>
+    <div class="content">
+        <div class="ui center aligned basic segment">
+            <p>서버에서 예상치 못한 에러가 발생하였어요! 조금 기다렸다가 다시 시도해주셔요!</p>
+        </div>
+    </div>
+    <div class="actions">
+        <div class="ui green ok inverted button">
+            <i class="checkmark icon"></i>
+            OK
+        </div>
+    </div>
+</div>
+<div class="ui segment">
+    <h1 class="ui icon header">
+        <i class="calculator icon"></i>
+        <div class="content">
+            BiS 계산기
+            <div class="sub header"><del>지인들이 물어볼 때마다 일일히 계산해주기 귀찮아서 만든거.</del></div>
+        </div>
+    </h1>
+    <h4 class="ui dividing header">사용 설명서</h4>
+    <div class="ui left aligned basic segment">
+        <div class="ui icon info message">
+            <i class="archive icon"></i>
+            <div class="content">
+                <div class="header">BiS 관련 유의사항</div>
+                <ul class="list">
+                    <li>해당 계산기는 북미 클라이언트 데이터를 기반으로 작동합니다! 한국 클라이언트에 아직 추가되지 않은 아이템들의 이름은 영문명으로 표기됩니다!</li>
+                    <li>계산식은 TheoryJerks의 Nemekh님이 작성하신 <a href="https://docs.google.com/spreadsheets/d/1Y6wP1rq0b-3Oh45Oo1slFQGyKUqrkfGYk5TjNandLqE/edit#gid=782468133">FFXIV 70 Statistic Intervals</a>와 MikeMatrix님이 작성하신 <a href="https://docs.google.com/spreadsheets/d/1ekB-egzV3I4lUSVCnqk7m8nDFc-eRsann5m92nwzbRM/edit#gid=0">Gear Stats Calculator</a>를 참조하였습니다!</li>
+                </ul>
+            </div>
+        </div>
+        <ol class="ui very relaxed list">
+            <li>새 세트 등록을 눌러 아이템 세트 등록 화면으로 이동합니다.</li>
+            <li>필터를 이용해 원하는 아이템들을 필터링한 후, 장비할 아이템을 클릭해 선택합니다.</li>
+            <li>마테리아가 장착 가능한 아이템의 경우 마테리아 버튼을 눌러 원하는 마테리아를 장착할 수 있습니다.</li>
+            <li>장비한 아이템이 바뀌거나 마테리아가 바뀔 때마다 <strong>화면 아래에 보여지는 총 스탯량</strong>과 <strong>화면 오른쪽에 보여지는 BiS 관련값</strong>들이 실시간으로 계산되어 보여집니다.</li>
+            <li><strong>BiS 값은 기술 위력</strong>에 영향을 끼치며 <strong>글로벌 쿨다운은 평타와 도트 위력</strong>에 영향을 끼칩니다. 원하는 글로벌 쿨다운이 유지되면서 가장 높은 BiS 값을 낼 수 있는 조합이 가장 이상적인 조합이 됩니다!</li>
+            <li>세트의 조합이 끝났으면 화면 오른쪽 메뉴의 세트 등록 버튼을 눌러 세트를 등록합니다!</li>
+            <li><strong>공유 링크 만들기</strong> 버튼을 누르면 현재 등록된 모든 아이템 세트들을 공유 가능한 링크가 생성됩니다! 생성된 링크는 데이터베이스에 보관되며 언제든지 불러오실 수 있습니다.</li>
+            <li>등록하신 아이템 세트는 브라우저를 닫거나 다른 페이지로 이동하실 경우 소실되므로 닫기 전에 꼭 공유 링크를 만들어 저장해두시기 바랍니다!</li>
+        </ol>
+    </div>
+    <div class="ui stackable three column grid">
+        <div class="column">
+            <div class="ui fluid green button" (click)="addNewSet();">
+                <i class="add square icon"></i>
+                새 세트 등록
+            </div>
+        </div>
+        <div class="column">
+            <div class="ui fluid blue button" [class.loading]="shareButtonLoading" (click)="shareSets();">
+                <i class="share icon"></i>
+                공유 링크 만들기
+            </div>
+        </div>
+        <div class="column">
+            <div class="ui fluid red button" (click)="removeAllSets();">
+                <i class="remove icon"></i>
+                계산기 리셋!
+            </div>
+        </div>
+    </div>
+    <div *ngIf="shareLink" class="ui basic segment">
+        <div class="ui fluid action input">
+            <input id="shareLinkInput" type="text" [(ngModel)]="shareLink" />
+            <div class="ui basic icon button" (click)="copyShareLink();">
+                <i class="clone icon"></i>
+            </div>
+        </div>
+    </div>
+    <div class="ui icon message">
+        <i class="warning icon"></i>
+        <div class="content">
+            공유 링크를 만들지 않은 아이템 세트들은 브라우저를 닫거나 다른 페이지로 이동 시 소실됩니다! 꼭 공유 링크를 만들어서 보관해두세요!
+        </div>
+    </div>
+</div>
+<div class="ui raised segment" *ngFor="let set of sets; index as index;">
+    <h1 class="ui dividing header" *ngIf="jobIconPaths && jobIconPaths[index]">
+        <img class="ui tiny image" [src]="'/assets/' + jobIconPaths[index]" />
+        <div class="content">
+            {{jobDisplayNames[index]}}
+            <div class="sub header">
+                {{raceDisplayNames[index]}}
+            </div>
+        </div>
+    </h1>
+    <div class="ui stackable grid" *ngIf="equipments && equipments[index]">
+        <div class="twelve wide column">
+            <table class="ui unstackable very basic two column table">
+                <tbody>
+                    <tr *ngFor="let equipmentDisplay of equipmentDisplayMap">
+                        <td *ngFor="let equipmentIndex of equipmentDisplay">
+                            <div *ngIf="equipmentIndex !== -1 && equipments[index][equipmentIndex]" [attr.data-tooltip]="equipments[index][equipmentIndex].materiaNames" [attr.data-inverted]="''" [attr.data-position]="'top center'">
+                                <h4 class="ui header">
+                                    <img class="ui image" [src]="'/assets/' + equipments[index][equipmentIndex].iconPath" />
+                                    <div class="content">
+                                        <span *ngIf="equipments[index][equipmentIndex].nameKo && equipments[index][equipmentIndex].nameKo.length > 0">{{equipments[index][equipmentIndex].nameKo}}</span>
+                                        <span *ngIf="!equipments[index][equipmentIndex].nameKo || equipments[index][equipmentIndex].nameKo.length <= 0">{{equipments[index][equipmentIndex].nameEn}}</span>
+                                        <span *ngIf="equipments[index][equipmentIndex].itemLevel"> ({{equipments[index][equipmentIndex].itemLevel}})</span>
+                                        <div *ngIf="equipments[index][equipmentIndex].source && equipments[index][equipmentIndex].source.length > 0" class="sub header">
+                                            {{equipments[index][equipmentIndex].source}}
+                                        </div>
+                                        <div class="ui circular images">
+                                            <img class="ui super-mini image" *ngFor="let materia of equipments[index][equipmentIndex].materias" [src]="'/assets/' + materia.iconPath" />
+                                        </div>
+                                    </div>
+                                </h4>
+                            </div>
+                            <div *ngIf="equipmentIndex !== -1 && equipments[index][equipmentIndex] === null">
+                                <h4 class="ui header">
+                                    <img class="ui image" src="/assets/ui/icon/000000/000026.tex.png" />
+                                    <div class="content">
+                                        장비 없음
+                                    </div>
+                                </h4>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="four wide column" *ngIf="set">
+            <table class="ui unstackable very basic two column table">
+                <tbody>
+                    <tr>
+                        <td>BiS 기대값</td>
+                        <td>{{set.damageEstimate | number:'1.0-2'}}</td>
+                    </tr>
+                    <tr>
+                        <td>글로벌 쿨다운</td>
+                        <td>{{set.globalCooldown | number:'1.0-2'}} 초</td>
+                    </tr>
+                    <tr>
+                        <td>데미지 감소값</td>
+                        <td>{{set.damageReduction | percent:'1.0-2'}}</td>
+                    </tr>
+                    <tr>
+                        <td>HP</td>
+                        <td>{{set.hp}}</td>
+                    </tr>
+                    <tr *ngIf="set.meal">
+                        <td>요리</td>
+                        <td *ngIf="set.meal.nameKo && set.meal.nameKo.length > 0">{{set.meal.nameKo}}</td>
+                        <td *ngIf="!set.meal.nameKo || set.meal.nameKo.length <= 0">{{set.meal.nameEn}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="ui unstackable very basic one column table" *ngIf="set.requiredMaterias && set.requiredMaterias.length > 0">
+                <tbody>
+                    <tr *ngFor="let requiredMateria of set.requiredMaterias">{{requiredMateria}}</tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="ui stackable three column grid">
+        <div class="column">
+            <div class="ui fluid green button" (click)="editSet(set);">
+                <i class="edit icon"></i>
+                세트 수정
+            </div>
+        </div>
+        <div class="column">
+            <div class="ui fluid yellow button" (click)="duplicate(set);">
+                <i class="clone icon"></i>
+                세트 복제
+            </div>
+        </div>
+        <div class="column">
+            <div class="ui fluid red button" (click)="deleteSet(set);">
+                <i class="remove icon"></i>
+                세트 삭제
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,162 @@
+<div class="ui top attached segment">
+  <h1 class="ui icon header">
+    <i class="alarm icon"></i>
+    <div class="content">
+      오늘 이거 했니?
+      <div class="sub header"><del>주간퀘 맨날 까먹어서 만든거.</del></div>
+    </div>
+  </h1>
+  <h4 class="ui dividing header">사용 설명서</h4>
+  <div class="ui left aligned basic segment">
+    <ul class="ui very relaxed list">
+      <li>간단한 일일/주간 할 일 체크 리스트입니다!</li>
+      <li>해당 체크 리스트는 사용하고 계신 브라우저의 <a href="https://developer.mozilla.org/ko/docs/Web/API/Window/localStorage" target="_blank">로컬 스토리지</a>에 자동으로 저장되며 <u>새 탭을 열거나 브라우저를 재시작하더라도 사라지지 않습니다.</u></li>
+      <li>다만 <u>브라우저의 방문 기록을 삭제하실 경우</u> 체크 리스트의 변경 사항들 역시 삭제되며 체크 리스트가 초기화되므로 유의해주셔요!</li>
+      <li>할 일을 완료하셨을 경우 <em>다 했어요!</em> 버튼을 클릭해 완료 여부를 입력해 둘 수 있습니다!</li>
+      <li>
+        완료 시 나타나는 리셋 시간의 경우 <u>사용하고 계신 컴퓨터의 표준 시간대</u>에 맞춰 나타나게 됩니다.
+        <br/>
+        <small>예) 한국 시간으로 <em>12:00 AM UTC+9</em>에 리셋되는 무작위 숙련의 리셋 시간을 표준 시간대가 <em>태평양 표준시 (UTC-8)</em>로 설정된 컴퓨터에서 열람 시 일광 절약 시간에 따라 <em>7:00 AM UTC-8</em> 혹은 <em>8:00 AM UTC-8</em>으로 표기되게 됩니다.</small>
+        <br/>
+        <small>물론 표준 시간대가 <em>서울 (UTC+9)</em>로 설정된 컴퓨터에서는 한국 시간인 <em>12:00 AM UTC+9</em>으로 정상 표기됩니다.</small>
+        <br/>
+        <small>표기되는 시간만 표준 시간대에 따라 달라질 뿐 실제로 리셋되는 시점은 동일하므로 해외 거주자분들도 안심하고 사용 가능합니다!</small>
+      </li>
+      <li>
+        <strong>할 일 만들기!</strong>의 <em>초기화 요일</em>과 <em>초기화 시간</em>의 경우 <u>사용하고 계신 컴퓨터의 표준 시간대에 맞는 시간</u>을 입력해주시면 자동으로 UTC0으로 변경되어 저장됩니다.
+        <br/>
+        <small>예) 표준 시간대가 <em>태평양 표준시 (UTC-8)</em>로 설정된 컴퓨터에서 한국 시간으로 <em>화요일 5:00 PM UTC+9</em>에 리셋되는 레이드를 할 일로 추가하고 싶은 경우, 일광 절약 시간에 따라 <em>화요일 12:00 AM UTC-8</em> 혹은 <em>화요일 1:00 AM UTC-8</em>으로 입력하셔야 올바른 시간에 리셋되게 됩니다.</small>
+        <br/>
+        <small>표준 시간대가 <em>서울 (UTC+9)</em>로 설정된 컴퓨터를 사용하고 계신 경우엔 그냥 간단히 한국 시간인 <em>화요일 5:00 PM UTC+9</em>을 입력해주시면 됩니다.</small>
+      </li>
+      <li><del>뭔 말인지 헷갈리신다구요? 그냥 컴퓨터 표준 시간대를 <em>서울 (UTC+9)</em>로 바꾸십시오.</del></li>
+      <li><del>시간대 왜 존재하는 거야 저주한다 시간대</del></li>
+    </ul>
+  </div>
+</div>
+<div class="ui bottom attached segment">
+  <button class="ui negative button" (click)="reset();">체크 리스트를 기본값으로 되돌리기!</button>
+</div>
+<div class="ui raised segment">
+  <table class="ui basic selectable celled table">
+    <thead>
+    <tr>
+      <th colspan="4" class="center aligned">매일 할 일</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let dailyStuff of dailyStuffs" [class.positive]="dailyStuff.completed" [class.negative]="!dailyStuff.completed" [@appearTrigger]="'in'">
+      <td class="collapsing center aligned">
+        <i class="icon" [class.checkmark]="dailyStuff.completed" [class.remove]="!dailyStuff.completed"></i>
+      </td>
+      <td class="center aligned">{{dailyStuff.title}}</td>
+      <td class="collapsing">
+        <div *ngIf="dailyStuff.completed" class="ui label">{{dailyStuff.nextResetDate | date:'MMM d, j'}}에 리셋!</div>
+        <div *ngIf="dailyStuff.completed" class="ui basic button" (click)="toggleCompleted(dailyStuff);">취소!</div>
+        <div *ngIf="!dailyStuff.completed" class="ui basic button" (click)="toggleCompleted(dailyStuff);">다 했어요!</div>
+      </td>
+      <td class="collapsing">
+        <div class="ui negative icon button" (click)="removeDaily(dailyStuff);">
+          <i class="remove icon"></i>
+        </div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+  <table class="ui basic selectable celled table">
+    <thead>
+    <tr>
+      <th colspan="4" class="center aligned">매주 할 일</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let weeklyStuff of weeklyStuffs" [class.positive]="weeklyStuff.completed" [class.negative]="!weeklyStuff.completed" [@appearTrigger]="'in'">
+      <td class="collapsing center aligned">
+        <i class="icon" [class.checkmark]="weeklyStuff.completed" [class.remove]="!weeklyStuff.completed"></i>
+      </td>
+      <td class="center aligned">{{weeklyStuff.title}}</td>
+      <td class="collapsing">
+        <div *ngIf="weeklyStuff.completed" class="ui label">{{weeklyStuff.nextResetDate | date:'MMM d, j'}}에 리셋!</div>
+        <div *ngIf="weeklyStuff.completed" class="ui basic button" (click)="toggleCompleted(weeklyStuff);">취소!</div>
+        <div *ngIf="!weeklyStuff.completed" class="ui basic button" (click)="toggleCompleted(weeklyStuff);">다 했어요!</div>
+      </td>
+      <td class="collapsing">
+        <div class="ui negative icon button" (click)="removeWeekly(weeklyStuff);">
+          <i class="remove icon"></i>
+        </div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+<div class="ui raised segment">
+  <h1 class="ui dividing header">
+    <i class="write icon"></i>
+    <div class="content">
+      할 일 만들기!
+    </div>
+  </h1>
+  <form #newStuffForm="ngForm" class="ui form">
+    <div class="required field" [class.error]="!title.valid">
+      <label>할 일 제목</label>
+      <input [(ngModel)]="newStuff.title" type="text" placeholder="뭘 해야 되는지 적어주셔요!" name="title" #title="ngModel" required>
+    </div>
+    <div class="required field" [class.error]="!resetPeriod.valid">
+      <label>초기화 타입</label>
+      <select [(ngModel)]="newStuff.resetPeriod" class="ui dropdown" name="resetPeriod" #resetPeriod="ngModel" required>
+        <option value="">언제 초기화되나요?</option>
+        <option value="0">매일</option>
+        <option value="1">매주</option>
+      </select>
+    </div>
+    <div *ngIf="newStuff.resetPeriod === '1'" class="required field" [class.error]="!resetLocalDay.valid" [@dropdownTrigger]="'in'" (@dropdownTrigger.start)="createDropdown();">
+      <label>초기화 요일</label>
+      <select [(ngModel)]="newStuff.resetLocalDay" class="ui dropdown" name="resetLocalDay" #resetLocalDay="ngModel" required>
+        <option value="">무슨 요일에 초기화되나요?</option>
+        <option value="0">일요일</option>
+        <option value="1">월요일</option>
+        <option value="2">화요일</option>
+        <option value="3">수요일</option>
+        <option value="4">목요일</option>
+        <option value="5">금요일</option>
+        <option value="6">토요일</option>
+      </select>
+    </div>
+    <div class="required field" [class.error]="!resetLocalHour.valid || !resetLocalNoon.valid">
+      <label>초기화 시간</label>
+      <div class="two fields">
+        <div class="required field" [class.error]="!resetLocalHour.valid">
+          <select [(ngModel)]="newStuff.resetLocalHour" class="ui dropdown" name="resetLocalHour" #resetLocalHour="ngModel" required>
+            <option value=""></option>
+            <option value="0">0시</option>
+            <option value="1">1시</option>
+            <option value="2">2시</option>
+            <option value="3">3시</option>
+            <option value="4">4시</option>
+            <option value="5">5시</option>
+            <option value="6">6시</option>
+            <option value="7">7시</option>
+            <option value="8">8시</option>
+            <option value="9">9시</option>
+            <option value="10">10시</option>
+            <option value="11">11시</option>
+          </select>
+        </div>
+        <div class="required field" [class.error]="!resetLocalNoon.valid">
+          <select [(ngModel)]="newStuff.resetLocalNoon" class="ui dropdown" name="resetLocalNoon" #resetLocalNoon="ngModel" required>
+            <option value=""></option>
+            <option value="0">AM</option>
+            <option value="1">PM</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <button class="ui fluid positive button" [class.disabled]="!newStuffForm.form.valid" (click)="addNewStuff();">할 일 추가!</button>
+  </form>
+</div>
+<div class="ui stacked segment">
+  <h4>업데이트 예정 목록</h4>
+  <div class="ui list">
+    <div class="item">세션 데이터를 DB에 저장 후 공유 기능.</div>
+  </div>
+</div>
